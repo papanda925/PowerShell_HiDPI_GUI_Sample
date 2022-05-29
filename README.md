@@ -9,11 +9,15 @@ ex:https://docs.microsoft.com/en-us/dotnet/api/system.drawing.sizef?view=net-6.0
 
 So, I tryed to create High dpi GUI sample.
 
-the type of GUI is there 
+# the type of GUI is there 
 
-　・Custom　Graphical　InputBox　Sample
+| No| sample |
+| ------------- | --------------- |
+| 1  | Custom　Graphical　InputBox　Sample  |
+| 2  | Graphical　Date　Picker　Sample  |
+| 3  | Multiple-selection List Boxes　Sample  |
+| 4  | Selecting Items from a List Box　Sample  |
 
-　・Graphical　Date　Picker　Sample
  
  
 # Reference site
