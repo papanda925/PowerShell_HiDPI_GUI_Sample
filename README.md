@@ -14,4 +14,13 @@ the type of GUI is there
 　・Custom　Graphical　InputBox　Sample
 
 　・Graphical　Date　Picker　Sample
+ 
+ 
+# Reference site
+
+https://stackoverflow.com/questions/185804/how-to-control-the-font-dpi-in-net-winforms-app
+
+https://www.web-dev-qa-db-ja.com/ja/c%23/dpi%E5%AF%BE%E5%BF%9C%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E3%81%AE%E4%BD%9C%E6%88%90/970761106/
+
+
 
