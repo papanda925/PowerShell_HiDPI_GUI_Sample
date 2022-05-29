@@ -1,3 +1,6 @@
+#this sample is Based on is microsoft sample thit is Creating a Custom Input Box
+#URL:https://docs.microsoft.com/en-us/powershell/scripting/samples/creating-a-custom-input-box?view=powershell-7.2
+
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
@@ -6,9 +9,12 @@ $form.Text = 'Data Entry Form'
 $form.Size = New-Object System.Drawing.Size(300,200)
 $form.StartPosition = 'CenterScreen'
 
+#For High DPI, We Set AutoScaleDimensions and AutoScaleMode
+#The reason SizeF is set to 96 is that the standard Windows resolution for the display is 96.
+#Maybe you shuld try that All object resets Drawing.Point And Drawing.Size
+#In some cases, review the Drawing.Point and Drawing.Size of all objects, depending on the resolution of your display.
 $form.AutoScaleDimensions =  New-Object System.Drawing.SizeF(96, 96)
 $form.AutoScaleMode  = [System.Windows.Forms.AutoScaleMode]::Dpi
-
 
 $okButton = New-Object System.Windows.Forms.Button
 $okButton.Location = New-Object System.Drawing.Point(75,220)
