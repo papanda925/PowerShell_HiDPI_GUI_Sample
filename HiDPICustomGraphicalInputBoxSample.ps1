@@ -41,7 +41,10 @@ $form.Controls.Add($label)
 $textBox = New-Object System.Windows.Forms.TextBox
 $textBox.Location = New-Object System.Drawing.Point(10,100)
 $textBox.Size = New-Object System.Drawing.Size(800,20)
-$Font = New-Object System.Drawing.Font("Yu Gothic UI",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
+#For High DPI, We Set Font Size
+#In Japanese, "Yu Gothic UI" is the best font type. However, this font is for Japan only. Therefore, the default font definition is undefined.
+#$Font = New-Object System.Drawing.Font("Yu Gothic UI",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
+$Font = New-Object System.Drawing.Font("",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
 $textBox.Font =  $Font 
 
 $form.Controls.Add($textBox)
