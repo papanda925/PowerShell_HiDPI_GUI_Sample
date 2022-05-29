@@ -13,10 +13,10 @@ So, I tryed to create High dpi GUI sample.
 
 | No| sample |
 | ------------- | --------------- |
-| 1  | Custom　Graphical　InputBox　Sample  |
-| 2  | Graphical　Date　Picker　Sample  |
-| 3  | Multiple-selection List Boxes　Sample  |
-| 4  | Selecting Items from a List Box　Sample  |
+| 1  | Custom　Graphical　InputBox Sample |
+| 2  | Graphical　Date　Picker Sample |
+| 3  | Multiple-selection List Boxes Sample |
+| 4  | Selecting Items from a List Box Sample |
 
  
  
