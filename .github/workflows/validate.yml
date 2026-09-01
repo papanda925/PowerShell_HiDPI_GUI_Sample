@@ -1,0 +1,17 @@
+name: Validate PowerShell samples
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse and validate samples
+        shell: pwsh
+        run: ./Tests/Test-Repository.ps1

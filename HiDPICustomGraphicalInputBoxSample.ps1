@@ -1,61 +1,84 @@
-#this sample is Based on is microsoft sample thit is Creating a Custom Input Box
-#URL:https://docs.microsoft.com/en-us/powershell/scripting/samples/creating-a-custom-input-box?view=powershell-7.2
+# Based on Microsoft's "Creating a custom input box" PowerShell sample.
+# This version adds DPI scaling and layout containers so controls remain visible.
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
 
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$form = New-Object System.Windows.Forms.Form
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+$form = [System.Windows.Forms.Form]::new()
 $form.Text = 'Data Entry Form'
-$form.Size = New-Object System.Drawing.Size(300,200)
-$form.StartPosition = 'CenterScreen'
-
-#For High DPI, We Set AutoScaleDimensions and AutoScaleMode
-#The reason SizeF is set to 96 is that the standard Windows resolution for the display is 96.
-#Maybe you shuld try that All object resets Drawing.Point And Drawing.Size
-#In some cases, review the Drawing.Point and Drawing.Size of all objects, depending on the resolution of your display.
-$form.AutoScaleDimensions =  New-Object System.Drawing.SizeF(96, 96)
-$form.AutoScaleMode  = [System.Windows.Forms.AutoScaleMode]::Dpi
-
-$okButton = New-Object System.Windows.Forms.Button
-$okButton.Location = New-Object System.Drawing.Point(75,220)
-$okButton.Size = New-Object System.Drawing.Size(75,50)
-$okButton.Text = 'OK'
-$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
-$form.AcceptButton = $okButton
-$form.Controls.Add($okButton)
-
-$cancelButton = New-Object System.Windows.Forms.Button
-$cancelButton.Location = New-Object System.Drawing.Point(150,220)
-$cancelButton.Size = New-Object System.Drawing.Size(200,50)
-$cancelButton.Text = 'Cancel'
-$cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
-$form.CancelButton = $cancelButton
-$form.Controls.Add($cancelButton)
-
-$label = New-Object System.Windows.Forms.Label
-$label.Location = New-Object System.Drawing.Point(10,20)
-$label.Size = New-Object System.Drawing.Size(800,40)
-$label.Text = 'Please enter the information in the space below:'
-$form.Controls.Add($label)
-
-$textBox = New-Object System.Windows.Forms.TextBox
-$textBox.Location = New-Object System.Drawing.Point(10,100)
-$textBox.Size = New-Object System.Drawing.Size(800,20)
-#For High DPI, We Set Font Size
-#In Japanese, "Yu Gothic UI" is the best font type. However, this font is for Japan only. Therefore, the default font definition is undefined.
-#$Font = New-Object System.Drawing.Font("Yu Gothic UI",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
-$Font = New-Object System.Drawing.Font("",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
-$textBox.Font =  $Font 
-
-$form.Controls.Add($textBox)
-
+$form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
+$form.ClientSize = [System.Drawing.Size]::new(480, 180)
+$form.MinimumSize = [System.Drawing.Size]::new(400, 190)
+$form.AutoScaleDimensions = [System.Drawing.SizeF]::new(96.0, 96.0)
+$form.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Dpi
 $form.Topmost = $true
 
-$form.Add_Shown({$textBox.Select()})
-$result = $form.ShowDialog()
+# Use the current Windows dialog font. Point-based fonts scale more naturally
+# than a fixed, large pixel font when the display DPI changes.
+$uiFont = [System.Drawing.SystemFonts]::MessageBoxFont.Clone()
+$form.Font = $uiFont
 
-if ($result -eq [System.Windows.Forms.DialogResult]::OK)
-{
-    $x = $textBox.Text
-    $x
+$layout = [System.Windows.Forms.TableLayoutPanel]::new()
+$layout.Dock = [System.Windows.Forms.DockStyle]::Fill
+$layout.Padding = [System.Windows.Forms.Padding]::new(12)
+$layout.ColumnCount = 1
+$layout.RowCount = 3
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::AutoSize))
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::AutoSize))
+$form.Controls.Add($layout)
+
+$label = [System.Windows.Forms.Label]::new()
+$label.AutoSize = $true
+$label.Margin = [System.Windows.Forms.Padding]::new(3, 3, 3, 10)
+$label.Text = 'Please enter the information in the space below:'
+$layout.Controls.Add($label, 0, 0)
+
+$textBox = [System.Windows.Forms.TextBox]::new()
+$textBox.Dock = [System.Windows.Forms.DockStyle]::Top
+$layout.Controls.Add($textBox, 0, 1)
+
+$buttonPanel = [System.Windows.Forms.FlowLayoutPanel]::new()
+$buttonPanel.AutoSize = $true
+$buttonPanel.Dock = [System.Windows.Forms.DockStyle]::Fill
+$buttonPanel.FlowDirection = [System.Windows.Forms.FlowDirection]::RightToLeft
+$buttonPanel.WrapContents = $false
+$layout.Controls.Add($buttonPanel, 0, 2)
+
+$cancelButton = [System.Windows.Forms.Button]::new()
+$cancelButton.AutoSize = $true
+$cancelButton.MinimumSize = [System.Drawing.Size]::new(80, 30)
+$cancelButton.Text = 'Cancel'
+$cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+$buttonPanel.Controls.Add($cancelButton)
+
+$okButton = [System.Windows.Forms.Button]::new()
+$okButton.AutoSize = $true
+$okButton.MinimumSize = [System.Drawing.Size]::new(80, 30)
+$okButton.Text = 'OK'
+$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+$buttonPanel.Controls.Add($okButton)
+
+$form.AcceptButton = $okButton
+$form.CancelButton = $cancelButton
+$form.Add_Shown({ $textBox.Select() })
+
+$selectedText = $null
+try {
+    if ($form.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+        $selectedText = $textBox.Text
+    }
+}
+finally {
+    $form.Dispose()
+    $uiFont.Dispose()
+}
+
+if ($null -ne $selectedText) {
+    $selectedText
 }
