@@ -1,66 +1,82 @@
+# High-DPI-aware Windows Forms sample for selecting multiple items.
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$form = New-Object System.Windows.Forms.Form
-$form.Text = 'Data Entry Form'
-$form.Size = New-Object System.Drawing.Size(300,200)
-$form.StartPosition = 'CenterScreen'
+[System.Windows.Forms.Application]::EnableVisualStyles()
 
-#For High DPI, We Set AutoScaleDimensions and AutoScaleMode
-#The reason SizeF is set to 96 is that the standard Windows resolution for the display is 96.
-#Maybe you shuld try that All object resets Drawing.Point And Drawing.Size
-#In some cases, review the Drawing.Point and Drawing.Size of all objects, depending on the resolution of your display.
-$form.AutoScaleDimensions =  New-Object System.Drawing.SizeF(96, 96)
-$form.AutoScaleMode  = [System.Windows.Forms.AutoScaleMode]::Dpi
-
-
-$OKButton = New-Object System.Windows.Forms.Button
-$OKButton.Location = New-Object System.Drawing.Point(75,160)
-$OKButton.Size = New-Object System.Drawing.Size(75,50)
-$OKButton.Text = 'OK'
-$OKButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
-$form.AcceptButton = $OKButton
-$form.Controls.Add($OKButton)
-
-$CancelButton = New-Object System.Windows.Forms.Button
-$CancelButton.Location = New-Object System.Drawing.Point(150,160)
-$CancelButton.Size = New-Object System.Drawing.Size(200,50)
-$CancelButton.Text = 'Cancel'
-$CancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
-$form.CancelButton = $CancelButton
-$form.Controls.Add($CancelButton)
-
-$label = New-Object System.Windows.Forms.Label
-$label.Location = New-Object System.Drawing.Point(10,20)
-$label.Size = New-Object System.Drawing.Size(800,60)
-$label.Text = 'Please make a selection from the list below:'
-$form.Controls.Add($label)
-
-$listBox = New-Object System.Windows.Forms.Listbox
-$listBox.Location = New-Object System.Drawing.Point(75,80)
-$listBox.Size = New-Object System.Drawing.Size(260,20)
-
-$listBox.SelectionMode = 'MultiExtended'
-#For High DPI, We Set Font Size
-#In Japanese, "Yu Gothic UI" is the best font type. However, this font is for Japan only. Therefore, the default font definition is undefined.
-#$Font = New-Object System.Drawing.Font("Yu Gothic UI",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
-$Font = New-Object System.Drawing.Font("",45,([System.Drawing.FontStyle]::Regular),[System.Drawing.GraphicsUnit]::Pixel)
-$listBox.Font =  $Font 
-
-[void] $listBox.Items.Add('Item 1')
-[void] $listBox.Items.Add('Item 2')
-[void] $listBox.Items.Add('Item 3')
-[void] $listBox.Items.Add('Item 4')
-[void] $listBox.Items.Add('Item 5')
-
-$listBox.Height = 70
-$form.Controls.Add($listBox)
+$form = [System.Windows.Forms.Form]::new()
+$form.Text = 'Select Items'
+$form.StartPosition = [System.Windows.Forms.FormStartPosition]::CenterScreen
+$form.ClientSize = [System.Drawing.Size]::new(460, 320)
+$form.MinimumSize = [System.Drawing.Size]::new(380, 280)
+$form.AutoScaleDimensions = [System.Drawing.SizeF]::new(96.0, 96.0)
+$form.AutoScaleMode = [System.Windows.Forms.AutoScaleMode]::Dpi
 $form.Topmost = $true
 
-$result = $form.ShowDialog()
+$uiFont = [System.Drawing.SystemFonts]::MessageBoxFont.Clone()
+$form.Font = $uiFont
 
-if ($result -eq [System.Windows.Forms.DialogResult]::OK)
-{
-    $x = $listBox.SelectedItems
-    $x
+$layout = [System.Windows.Forms.TableLayoutPanel]::new()
+$layout.Dock = [System.Windows.Forms.DockStyle]::Fill
+$layout.Padding = [System.Windows.Forms.Padding]::new(12)
+$layout.ColumnCount = 1
+$layout.RowCount = 3
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::AutoSize))
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::Percent, 100))
+[void]$layout.RowStyles.Add([System.Windows.Forms.RowStyle]::new([System.Windows.Forms.SizeType]::AutoSize))
+$form.Controls.Add($layout)
+
+$label = [System.Windows.Forms.Label]::new()
+$label.AutoSize = $true
+$label.Margin = [System.Windows.Forms.Padding]::new(3, 3, 3, 10)
+$label.Text = 'Please make one or more selections from the list below:'
+$layout.Controls.Add($label, 0, 0)
+
+$listBox = [System.Windows.Forms.ListBox]::new()
+$listBox.Dock = [System.Windows.Forms.DockStyle]::Fill
+$listBox.SelectionMode = [System.Windows.Forms.SelectionMode]::MultiExtended
+[void]$listBox.Items.AddRange([object[]]('Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'))
+$layout.Controls.Add($listBox, 0, 1)
+
+$buttonPanel = [System.Windows.Forms.FlowLayoutPanel]::new()
+$buttonPanel.AutoSize = $true
+$buttonPanel.Dock = [System.Windows.Forms.DockStyle]::Fill
+$buttonPanel.FlowDirection = [System.Windows.Forms.FlowDirection]::RightToLeft
+$buttonPanel.WrapContents = $false
+$layout.Controls.Add($buttonPanel, 0, 2)
+
+$cancelButton = [System.Windows.Forms.Button]::new()
+$cancelButton.AutoSize = $true
+$cancelButton.MinimumSize = [System.Drawing.Size]::new(80, 30)
+$cancelButton.Text = 'Cancel'
+$cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+$buttonPanel.Controls.Add($cancelButton)
+
+$okButton = [System.Windows.Forms.Button]::new()
+$okButton.AutoSize = $true
+$okButton.MinimumSize = [System.Drawing.Size]::new(80, 30)
+$okButton.Text = 'OK'
+$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+$buttonPanel.Controls.Add($okButton)
+
+$form.AcceptButton = $okButton
+$form.CancelButton = $cancelButton
+
+$selectedItems = $null
+try {
+    if ($form.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+        $selectedItems = @($listBox.SelectedItems)
+    }
+}
+finally {
+    $form.Dispose()
+    $uiFont.Dispose()
+}
+
+if ($null -ne $selectedItems) {
+    $selectedItems
 }
